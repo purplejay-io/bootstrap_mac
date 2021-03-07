@@ -3,11 +3,11 @@
 
 #curl -L aka.ms/EnrollMyMac --output /tmp/intune.pkg
 
-softwareupdate --fetch-full-installer
-
-sleep 10
-
-killall InstallAssistant
+if [ ! -d "/Applications/Install macOS Big Sur.app" ]; then
+  softwareupdate --fetch-full-installer
+  sleep 5
+  killall InstallAssistant
+fi
 
 '/Applications/Install macOS Big Sur.app/Contents/Resources/startosinstall' --eraseinstall --agreetolicense \
 --forcequitapps --newvolumename 'Macintosh HD' --passprompt
