@@ -44,6 +44,7 @@ brwe install --cask intune-company-portal
 brew install --cask microsoft-edge
 brew install --cask microsoft-office
 brew install --cask 1password
+brew install --cask homebrew/cask-drivers/yubico-yubikey-manager
 brew install --cask jetbrains-toolbox
 brew install --cask firefox
 brew install --cask mactex
