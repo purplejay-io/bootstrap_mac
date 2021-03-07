@@ -7,5 +7,7 @@ softwareupdate --fetch-full-installer
 
 sleep 10
 
+killall InstallAssistant
+
 '/Applications/Install macOS Big Sur.app/Contents/Resources/startosinstall' --eraseinstall --agreetolicense \
 --forcequitapps --newvolumename 'Macintosh HD' --passprompt
