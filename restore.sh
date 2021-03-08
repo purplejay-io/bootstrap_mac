@@ -3,6 +3,13 @@
 
 #curl -L aka.ms/EnrollMyMac --output /tmp/intune.pkg
 
+FMM_CHECK=`/usr/sbin/nvram -x -p | /usr/bin/grep fmm-mobileme-token-FMM`
+
+if [ -z "$FMM_CHECK" ]; then
+  echo "Activation Lock is enabled. Sign out of iCloud and try again."
+  exit
+fi
+
 if [ ! -d "/Applications/Install macOS Big Sur.app" ]; then
   softwareupdate --fetch-full-installer
   sleep 5
