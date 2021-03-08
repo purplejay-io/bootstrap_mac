@@ -51,4 +51,8 @@ brew install --cask jetbrains-toolbox
 brew install --cask firefox
 brew install --cask mactex
 brew install --cask wireshark
-brew install --cask docker
+
+if [[ ! `uname -m` == 'arm64' ]]; then
+    brew install --cask docker
+fi
+
