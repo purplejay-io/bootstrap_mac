@@ -48,7 +48,7 @@ brew install --cask github visual-studio-code
 brew install --cask intune-company-portal microsoft-edge microsoft-office microsoft-teams
 brew install --cask 1password homebrew/cask-drivers/yubico-yubikey-manager
 brew install --cask jetbrains-toolbox
-brew install --cask firefox
+brew install --cask firefox google-chrome
 brew install --cask mactex
 brew install --cask wireshark
 
