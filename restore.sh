@@ -16,7 +16,7 @@ if [ ! -d "/Applications/Install macOS Big Sur.app" ]; then
   killall InstallAssistant
 fi
 
-defaults delete MobileMeAccounts
+# defaults delete MobileMeAccounts
 
 '/Applications/Install macOS Big Sur.app/Contents/Resources/startosinstall' --eraseinstall --agreetolicense \
 --forcequitapps --newvolumename 'Macintosh HD' --passprompt
