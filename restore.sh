@@ -5,7 +5,7 @@
 
 FMM_CHECK=`/usr/sbin/nvram -x -p | /usr/bin/grep fmm-mobileme-token-FMM`
 
-if [ ! -z "$FMM_CHECK" ]; then
+if [[ ! -z "$FMM_CHECK" && ! -n $1 ]]; then
   echo "Activation Lock is enabled. Sign out of iCloud and try again."
   exit 1
 fi
