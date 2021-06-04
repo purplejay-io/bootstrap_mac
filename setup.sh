@@ -49,7 +49,7 @@ brew install --cask intune-company-portal microsoft-edge microsoft-office micros
 brew install --cask 1password homebrew/cask-drivers/yubico-yubikey-manager
 brew install --cask jetbrains-toolbox
 brew install --cask firefox google-chrome
-brew install --cask mactex
+# brew install --cask mactex
 brew install --cask wireshark
 
 if [[ ! `uname -m` == 'arm64' ]]; then
