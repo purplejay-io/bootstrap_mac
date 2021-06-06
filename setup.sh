@@ -42,7 +42,7 @@ if [[ `uname -m` == 'arm64' ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-brew install python3 npm nmap tree wget wireguard-tools
+brew install python3 npm nmap tree wget wireguard-tools jq
 
 brew install --cask github visual-studio-code
 brew install --cask intune-company-portal microsoft-edge microsoft-office microsoft-teams
