@@ -45,7 +45,7 @@ fi
 brew install python3 npm nmap tree wget wireguard-tools jq azure-cli
 
 brew install --cask github visual-studio-code
-brew install --cask intune-company-portal microsoft-edge microsoft-office microsoft-teams
+brew install --cask intune-company-portal microsoft-edge microsoft-office microsoft-teams onedrive
 brew install --cask 1password homebrew/cask-drivers/yubico-yubikey-manager
 brew install --cask jetbrains-toolbox
 brew install --cask firefox google-chrome
