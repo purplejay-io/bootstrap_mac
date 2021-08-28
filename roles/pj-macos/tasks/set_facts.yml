@@ -51,7 +51,7 @@
     cat ~/.dropbox/info.json | jq '.business.path' -r | grep -o '[^/]*$'
   register: dropbox
   changed_when: false
-#  failed_when: dropbox.stderr
+  failed_when: false
 
 - name: Set Dropbox Facts
   set_fact:
