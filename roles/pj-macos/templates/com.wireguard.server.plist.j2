@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>com.wireguard.server</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>{{ homebrew_path }}/bin/wg-quick</string>
+            <string>up</string>
+            <string>{{ homebrew_path }}/etc/wireguard/wg0.conf</string>
+        </array>
+        <key>KeepAlive</key>
+        <true/>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>StandardErrorPath</key>
+        <string>{{ homebrew_path }}/var/log/wireguard.err</string>
+        <key>EnvironmentVariables</key>
+        <dict>
+            <key>PATH</key>
+            <string>/usr/local/sbin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        </dict>
+    </dict>
+</plist>

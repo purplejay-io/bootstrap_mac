@@ -1,0 +1,24 @@
+---
+- name: Ensure wireguard directory exist
+  ansible.builtin.file:
+    path: "{{ homebrew_path }}/etc/wireguard"
+    state: directory
+    mode: '0700'
+#    owner: root
+#    group: wheel
+#  become: yes
+
+- name: Wireguard configs
+  block:
+    - name: Copy wg.conf file to local
+      template:
+        src: "{{ dropbox_root }}/Shared/wg0.conf.j2"
+        dest: "{{ homebrew_path }}/etc/wireguard/wg0.conf"
+        mode: '0700'
+
+    - name: Copy wg plist file to /Library/LaunchDaemons/
+      template:
+        src: com.wireguard.server.plist.j2
+        dest: /Library/LaunchDaemons/com.wireguard.server.plist
+      become: yes
+  notify: reload wireguard

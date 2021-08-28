@@ -1,0 +1,30 @@
+{
+    "fields": [
+        {
+            "designation": "username",
+            "name": "username",
+            "type": "T",
+            "value": "{{ wg_endpoints[host_serial] }}"
+        },
+        {
+            "designation": "password",
+            "name": "password",
+            "type": "P",
+            "value": "{{ gen_wgkeys.stdout_lines[0] }}"
+        }
+    ],
+    "notesPlain": "",
+    "passwordHistory": [],
+    "sections": [
+        {
+            "fields": [
+                {
+                    "k": "string",
+                    "n": "9572F37BB9CF41EEA8C30D5E04306EF3",
+                    "t": "publickey",
+                    "v": "{{ gen_wgkeys.stdout_lines[1] }}"
+                }
+            ]
+        }
+    ]
+}

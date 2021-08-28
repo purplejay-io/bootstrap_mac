@@ -1,0 +1,25 @@
+---
+# tasks file for roles/pj-macos
+- name: Set additional facts
+  import_tasks: set_facts.yml
+
+- name: Setup env.yml
+  import_tasks: setup.yml
+  when: envyml == false and (dropbox and boxcryptor)
+  tags: envyml
+
+- name: Package baselines
+  import_tasks: packages.yml
+  tags: update
+
+- name: Apply SSH Settings
+  import_tasks: ssh.yml
+  when: envyml
+
+- name: Apply Wireguard Settings
+  import_tasks: wg.yml
+  when: dropbox and boxcryptor and envyml
+
+- name: Apply PJ Envionrment settings
+  import_tasks: pj_environment.yml
+  when: dropbox and boxcryptor and envyml

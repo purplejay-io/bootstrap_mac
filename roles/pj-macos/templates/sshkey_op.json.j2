@@ -1,0 +1,30 @@
+{
+    "fields": [
+        {
+            "designation": "username",
+            "name": "username",
+            "type": "T",
+            "value": "{{ ansible_user_id }}"
+        },
+        {
+            "designation": "password",
+            "name": "password",
+            "type": "P",
+            "value": "{{ new_sshkey_pwd.stdout }}"
+        }
+    ],
+    "notesPlain": "{% for item in new_sshkey_priv.stdout_lines %}{{ item }}\n{% endfor %}",
+    "passwordHistory": [],
+    "sections": [
+        {
+            "fields": [
+                {
+                    "k": "string",
+                    "n": "9572F37BB9CF41EEA8C30D5E04306EF3",
+                    "t": "pub",
+                    "v": "{{ new_sshkey_pub.stdout }}"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+---
+# handlers file for roles/pj-macos
+- name: reload ssh
+  shell: |
+    launchctl unload /System/Library/LaunchDaemons/ssh.plist
+    launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+  become: yes
+  when: ssh_status == "0"
+
+# TODO: Fix permissions in wireguard.err file so this step is no longer needed
+- name: reload wireguard
+  shell: |
+    launchctl enable system/com.wireguard.server
+    launchctl bootstrap system /Library/LaunchDaemons/com.wireguard.server.plist
+    chown -R {{ ansible_user_id }} {{ homebrew_path }}/var/log
+  become: yes

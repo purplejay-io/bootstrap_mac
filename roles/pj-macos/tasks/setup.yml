@@ -1,0 +1,188 @@
+---
+# Confirm op cli is logged in
+- name: Confirm op cli is logged in
+  shell: op get account
+  changed_when: false
+  register: op_check
+  failed_when: op_check.stderr
+
+# Get Laptop password
+- name: Laptop Password
+  block:
+    - name: Ask user to laptop password
+      pause:
+        prompt: "What is your local mac password?"
+        echo: no
+      register: user_laptop_pwd
+
+    - name: Set Laptop password
+      set_fact:
+        laptop_pwd: "{{ user_laptop_pwd.user_input }}"
+        ansible_become_password: "{{ user_laptop_pwd.user_input }}"
+
+    - name: If tasks doesn't execute, press CTR-C and try running again
+      shell: echo "Laptop password successful"
+      changed_when: false
+      become: true
+
+  no_log: true
+
+# Pull ssh secrets from op if exists
+- name: Determine if SSH Key in 1password
+  block:
+    - name: Grab ssh key from 1password
+      shell: op get item {{ host_serial }}_sshkey --fields notes
+      register: op_sshkey_priv
+      changed_when: false
+      failed_when: false
+
+    - name: Grab ssh pubkey from 1password
+      shell: op get item {{ host_serial }}_sshkey --fields pub
+      register: op_sshkey_pub
+      changed_when: false
+      failed_when: false
+
+#    - name: Grab ssh key pwd from 1password
+#      shell: op get item {{ host_serial }}_sshkey --fields password
+#      register: op_sshkey_pwd
+#      changed_when: false
+#      failed_when: false
+
+    - name: Set sshkey facts based on op pull results
+      set_fact:
+        sshkeygen: "{{ op_sshkey_priv.stderr }}"
+        sshkey_priv: "{{ op_sshkey_priv.stdout_lines }}"
+        sshkey_pub: "{{ op_sshkey_pub.stdout }}"
+  no_log: true
+
+# Generate SSH Keys if needed
+- name: Generate SSH Key if not in 1password
+  block:
+    - name: Generate a random password
+      shell: openssl rand -base64 20
+      register: new_sshkey_pwd
+
+    - name: Generate new ssh key
+      shell: >
+        echo "y\n" |
+        ssh-keygen -t ed25519 -C "{{ host_serial }}@{{ ansible_user_id }}"
+        -N "{{ new_sshkey_pwd.stdout }}" -f ~/.ssh/id_ed25519
+
+    - name: Save private key to var
+      shell: cat ~/.ssh/id_ed25519
+      register: new_sshkey_priv
+
+    - name: Save public key to var
+      shell: cat ~/.ssh/id_ed25519.pub
+      register: new_sshkey_pub
+
+    - name: Save sshkey op template to root dir
+      template:
+        src: sshkey_op.json.j2
+        dest: sshkey_op.json
+
+    - name: Save sshkey secrets to op
+      shell: |
+        op create item "Login" --title {{ host_serial }}_sshkey --vault Private "$(op encode < sshkey_op.json)"
+        rm sshkey_op.json
+
+    - name: Set sshkey facts based new ssh-keygen
+      set_fact:
+        sshkeygen: "{{ new_sshkey_priv.stderr }}"
+        sshkey_priv: "{{ new_sshkey_priv.stdout_lines }}"
+        sshkey_pub: "{{ new_sshkey_pub.stdout }}"
+  when: sshkeygen
+  no_log: true
+
+# Pull wireguard secrets from op if exists
+- name: Determine if wireguard secrets are in 1password
+  block:
+    - name: Grab wg private key from 1password
+      shell: op get item {{ host_serial }}_wg --fields password --vault Private
+      register: op_wg_priv
+      changed_when: false
+      failed_when: false
+
+    - name: Grab wg public key from 1password
+      shell: op get item {{ host_serial }}_wg --fields pubkey --vault Private
+      register: op_wg_pub
+      changed_when: false
+      failed_when: false
+
+    - name: Grab wg endpoint ip key from 1password
+      shell: op get item {{ host_serial }}_wg --fields username --vault Private
+      register: op_wg_ip
+      changed_when: false
+      failed_when: false
+
+    - name: Set wg facts based on op pull results
+      set_fact:
+        wg: "{{ op_wg_priv.stderr }}"
+        wg_priv: "{{ op_wg_priv.stdout }}"
+        wg_pub: "{{ op_wg_pub.stdout }}"
+        wg_ip: "{{ op_wg_ip.stdout }}"
+  no_log: true
+
+# Generate wg secrets if needed
+- name: Generate wg secrets if not in 1password
+  block:
+    - name: Generate wg public and private keys
+      shell: |
+        wg genkey | tee privatekey | wg pubkey > publickey
+        cat privatekey
+        cat publickey
+        rm privatekey publickey
+      register: gen_wgkeys
+
+    - name: Pull endpoint ip vars
+      include_vars:
+        file: ~/Purple Jay Dropbox/Shared/wg_endpoints.yml
+        name: wg_endpoints
+
+    - name: Save wg op template to root dir
+      template:
+        src: wg_op.json.j2
+        dest: wg_op.json
+
+    - name: Save Secrets to op
+      shell: |
+        op create item "Login" --title {{ host_serial }}_wg --vault Private "$(op encode < wg_op.json)"
+        rm wg_op.json
+
+#    - name: Debug Vars
+#      debug:
+#        msg:
+#          - "{{ gen_wgkeys.stdout_lines[0] }}"
+#          - "{{ wg_endpoints.FVFDT6K8Q05P }}"
+#          - "{{ wg_endpoints[host_serial] }}"
+
+    - name: Set wg facts based on op pull results
+      set_fact:
+        wg_priv: "{{ gen_wgkeys.stdout_lines[0] }}"
+        wg_pub: "{{ gen_wgkeys.stdout_lines[1] }}"
+        wg_ip: "{{ wg_endpoints[host_serial] }}"
+
+  when: wg
+  no_log: true
+
+- name: Output vars to env.yml
+  block:
+  - name: Create env.yml file with ansible_user
+    shell: |
+      echo "---" > env.yml
+      echo "ansible_become_password: {{ laptop_pwd }}" >> env.yml
+      echo "laptop_pwd: {{ laptop_pwd }}" >> env.yml
+      echo "sshkey_priv: {{ sshkey_priv }}" >> env.yml
+      echo "sshkey_pub: {{ sshkey_pub }}" >> env.yml
+      echo "wg_priv: {{ wg_priv }}" >> env.yml
+      echo "wg_pub: {{ wg_pub }}" >> env.yml
+      echo "wg_ip: {{ wg_ip }}" >> env.yml
+
+  - name: Generate random password for Ansible Vault
+    shell: |
+      echo `openssl rand -base64 25` > .pass
+      chmod 600 .pass
+
+  - name: Store 1password secrets in Ansible Vault
+    shell: ansible-vault encrypt --vault-password-file .pass env.yml
+  no_log: true

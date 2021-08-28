@@ -1,0 +1,52 @@
+---
+- name: ssh private key check
+  lineinfile:
+    dest: ~/.ssh/id_ed25519
+    line: "{{ item }}"
+    create: yes
+    mode: 0600
+  loop: "{{ sshkey_priv }}"
+
+- name: ssh public key check
+  lineinfile:
+    dest: ~/.ssh/id_ed25519.pub
+    line: "{{ sshkey_pub }}"
+    create: yes
+    mode: 0644
+
+- name: ssh config file
+  blockinfile:
+    path: ~/.ssh/config
+    block: |
+      Host gitlab.purplejay.io
+        User git
+        HostName gitlab.purplejay.io
+        UseKeychain yes
+      Host github.com
+        User git
+        HostName github.com
+        UseKeychain yes
+    marker: "# {mark} PJ baseline ssh config #"
+    create: yes
+    mode: 0644
+
+- name: SSH Config File lockdown
+  block:
+    - name: Restrict Password Authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: ^(#PasswordAuthentication|PasswordAuthentication)
+        line: PasswordAuthentication no
+    - name: Pubkey Authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: ^(#PubkeyAuthentication|PubkeyAuthentication)
+        line: PubkeyAuthentication yes
+    - name: Disable Agent Forwarding
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: ^(#AllowAgentForwarding|AllowAgentForwarding)
+        line: AllowAgentForwarding no
+  become: yes
+  notify: reload ssh
+
