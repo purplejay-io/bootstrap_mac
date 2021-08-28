@@ -3,12 +3,12 @@
 Factory Restore macOS
 
 ``` bash
-caffeinate -d /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/purplejay-io/bootstrap_mac/master/restore.sh)"
+caffeinate -d /bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/purplejay-io/bootstrap_mac/master/restore.sh)"
 ```
 
 Baseline setup for Purple Jay macOS
 
 ``` bash
-caffeinate -d /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/purplejay-io/bootstrap_mac/master/setup.sh)"
+caffeinate -d /bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/purplejay-io/bootstrap_mac/master/run.sh)"
 ```
 
