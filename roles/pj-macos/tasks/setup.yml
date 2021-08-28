@@ -119,7 +119,7 @@
 
     - name: Pull endpoint ip vars
       include_vars:
-        file: ~/Purple Jay Dropbox/Shared/wg_endpoints.yml
+        file: "{{ dropbox_root }}/Shared/wg_endpoints.yml"
         name: wg_endpoints
 
     - name: Save wg op template to root dir
