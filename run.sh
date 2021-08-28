@@ -64,7 +64,7 @@ if [[ ! "$(which python3)"  == "$HOMEBREW_PATH/bin/python3" ]];then
 fi
 
 # Install ansible if not already installed
-if [[ ! $ANSIBLE_CHECK == "$HOMEBREW_PATH/bin/ansible" ]];then
+if [[ ! "$(which ansible)"  == "$HOMEBREW_PATH/bin/ansible" ]];then
   python3 -m pip install -r requirements.txt
   source ~/
 fi
