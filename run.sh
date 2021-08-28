@@ -18,7 +18,7 @@ fi
 
 if [[ ! -d $HOME/.config/bootstrap_mac ]]; then
   mkdir -p $HOME/.config
-  git clone git@github.com:purplejay-io/bootstrap_mac.git $HOME/.config/bootstrap_mac
+  git clone https://github.com/purplejay-io/bootstrap_mac.git $HOME/.config/bootstrap_mac
 fi
 
 cd $HOME/.config/bootstrap_mac
