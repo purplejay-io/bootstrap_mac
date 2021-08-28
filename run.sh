@@ -2,22 +2,34 @@
 
 HOMEBREW_CHECK=`which brew`
 HOMEBREW_PATH=`echo $HOMEBREW_CHECK | cut -d "/" -f 1-3`
-PYTHON3_CHECK=`which python3`
-ANSIBLE_CHECK=`which ansible`
 CURRENT_DIR=`basename "$PWD"`
 
-if [[ ! -d $HOME/.config/bootstrap_mac ]]; then
-  mkdir -p $HOME/.config/
-  cd $HOME/.config/
-  git clone git@github.com:purplejay-io/bootstrap_mac.git
+if [[ ! -x "$(which brew)" ]];then
+  sudo echo "Session now have sudo"
+  echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [[ `uname -m` == 'arm64' ]]; then
+    sudo softwareupdate --install-rosetta --agree-to-license
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+  source ~/
+  HOMEBREW_PATH=`echo $HOMEBREW_CHECK | cut -d "/" -f 1-3`
 fi
 
-if [[ $CURRENT_DIR != "bootstrap_mac" ]]; then
-  cd $HOME/.config/bootstrap_mac
+if [[ ! -d $HOME/.config/bootstrap_mac ]]; then
+  mkdir -p $HOME/.config
+  git clone git@github.com:purplejay-io/bootstrap_mac.git $HOME/.config/bootstrap_mac
 fi
+
+cd $HOME/.config/bootstrap_mac
+git fetch
 
 if [[ `git rev-list HEAD...origin/main --count` != 0 ]]; then
   git pull
+fi
+
+if [[ `git rev-list HEAD...origin/main --count` != 0 ]]; then
+  exit 1
 fi
 
 # Exit if in Virtual Environment
@@ -44,26 +56,8 @@ if [[ $1 == "reset" ]];then
   exit 1
 fi
 
-# Install Homebrew if not already installed
-# if [[ ! $HOMEBREW_CHECK =~ "bin" ]];then
-if [[ ! -x "$(which brew)" ]];then
-  echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  softwareupdate -ia
-
-  if [[ `uname -m` == 'arm64' ]]; then
-    sudo softwareupdate --install-rosetta --agree-to-license
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
-
-  source ~/
-  brew install wireguard-tools jq
-  brew install --cask 1password-cli
-  source ~/
-fi
-
 # Install homebrew python3 if not already installed
-if [[ ! $PYTHON3_CHECK == "$HOMEBREW_PATH/bin/python3" ]];then
+if [[ "$(which brew)"  == "$HOMEBREW_PATH/bin/python3" ]];then
   brew install python3
   source ~/
   python3 -m pip install pip --upgrade
@@ -72,6 +66,16 @@ fi
 # Install ansible if not already installed
 if [[ ! $ANSIBLE_CHECK == "$HOMEBREW_PATH/bin/ansible" ]];then
   python3 -m pip install -r requirements.txt
+  source ~/
+fi
+
+if [[ ! -x "$(which op)" ]];then
+  brew install --cask 1password-cli
+  source ~/
+fi
+
+if [[ ! -x "$(which wg)" ]];then
+  brew install wireguard-tools jq
   source ~/
 fi
 
@@ -95,11 +99,3 @@ else
     ansible-playbook local.yml --vault-password-file .pass -e @env.yml
   fi
 fi
-
-
-#python3 -m pip install pip --upgrade
-#
-#
-#sudo echo "You have sudo access now"
-#
-#ansible-playbook -t default local.yml
