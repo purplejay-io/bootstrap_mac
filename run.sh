@@ -57,14 +57,14 @@ if [[ $1 == "reset" ]];then
 fi
 
 # Install homebrew python3 if not already installed
-if [[ ! "$(which python3)"  == "$HOMEBREW_PATH/bin/python3" ]];then
+if [[ "$(which python3)"  != "$HOMEBREW_PATH/bin/python3" ]];then
   brew install python3
   source ~/
   python3 -m pip install pip --upgrade
 fi
 
 # Install ansible if not already installed
-if [[ ! "$(which ansible)"  == "$HOMEBREW_PATH/bin/ansible" ]];then
+if [[ "$(which ansible)"  != "$HOMEBREW_PATH/bin/ansible" ]];then
   python3 -m pip install -r requirements.txt
   source ~/
 fi
