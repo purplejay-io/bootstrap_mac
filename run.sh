@@ -4,6 +4,21 @@ HOMEBREW_CHECK=`which brew`
 HOMEBREW_PATH=`echo $HOMEBREW_CHECK | cut -d "/" -f 1-3`
 PYTHON3_CHECK=`which python3`
 ANSIBLE_CHECK=`which ansible`
+CURRENT_DIR=`basename "$PWD"`
+
+if [[ ! -d $HOME/.config/bootstrap_mac ]]; then
+  mkdir -p $HOME/.config/
+  cd $HOME/.config/
+  git clone git@github.com:purplejay-io/bootstrap_mac.git
+fi
+
+if [[ $CURRENT_DIR != "bootstrap_mac" ]]; then
+  cd $HOME/.config/bootstrap_mac
+fi
+
+if [[ `git rev-list HEAD...origin/main --count` != 0 ]]; then
+  git pull
+fi
 
 # Exit if in Virtual Environment
 if [[ ! -z $VIRTUAL_ENV ]];then
@@ -30,7 +45,8 @@ if [[ $1 == "reset" ]];then
 fi
 
 # Install Homebrew if not already installed
-if [[ ! $HOMEBREW_CHECK =~ "bin" ]];then
+# if [[ ! $HOMEBREW_CHECK =~ "bin" ]];then
+if [[ ! -x "$(which brew)" ]];then
   echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   softwareupdate -ia
 

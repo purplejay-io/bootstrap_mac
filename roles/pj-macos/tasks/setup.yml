@@ -8,24 +8,7 @@
 
 # Get Laptop password
 - name: Laptop Password
-  block:
-    - name: Ask user to laptop password
-      pause:
-        prompt: "What is your local mac password?"
-        echo: no
-      register: user_laptop_pwd
-
-    - name: Set Laptop password
-      set_fact:
-        laptop_pwd: "{{ user_laptop_pwd.user_input }}"
-        ansible_become_password: "{{ user_laptop_pwd.user_input }}"
-
-    - name: If tasks doesn't execute, press CTR-C and try running again
-      shell: echo "Laptop password successful"
-      changed_when: false
-      become: true
-
-  no_log: true
+  import_tasks: laptop_pwd.yml
 
 # Pull ssh secrets from op if exists
 - name: Determine if SSH Key in 1password

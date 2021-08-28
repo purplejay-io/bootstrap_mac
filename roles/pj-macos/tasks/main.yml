@@ -8,6 +8,10 @@
   when: envyml == false and (dropbox and boxcryptor)
   tags: envyml
 
+- name: Ask for laptop pass
+  import_tasks: laptop_pwd.yml
+  when: envyml == false
+
 - name: Package baselines
   import_tasks: packages.yml
   tags: update
