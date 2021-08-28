@@ -59,7 +59,7 @@
     dropbox_root_name: "{{ dropbox.stdout_lines[1]}}"
     dropbox_home: "{{ dropbox.stdout_lines[2]}}"
     dropbox_home_name: "{{ dropbox.stdout_lines[3]}}"
-  when: dropbox
+  when: dropbox.stdout
   changed_when: false
 
 - name: Determine if Boxcryptor is setup

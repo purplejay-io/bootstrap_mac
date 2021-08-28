@@ -5,7 +5,7 @@
 
 - name: Setup env.yml
   import_tasks: setup.yml
-  when: envyml == false and (dropbox and boxcryptor)
+  when: envyml == false and (dropbox.stdout and boxcryptor.stdout)
   tags: envyml
 
 - name: Ask for laptop pass
@@ -22,8 +22,8 @@
 
 - name: Apply Wireguard Settings
   import_tasks: wg.yml
-  when: dropbox and boxcryptor and envyml
+  when: dropbox.stdout and boxcryptor.stdout and envyml
 
 - name: Apply PJ Envionrment settings
   import_tasks: pj_environment.yml
-  when: dropbox and boxcryptor and envyml
+  when: dropbox.stdout and boxcryptor.stdout and envyml
