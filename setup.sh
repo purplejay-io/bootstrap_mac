@@ -7,5 +7,6 @@ if [[ ! -d ~/.config/bootstrap-mac ]];then
     git clone git@github.com:purplejay-io/bootstrap_mac.git
 else
     git pull
+fi
 
 ./run.sh
